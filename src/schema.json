@@ -1,0 +1,169 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+
+    "definitions": {
+        "visible": {
+            "description": "Whether or not the corresponding is visible by default",
+            "type": "boolean",
+            "default": true
+        },
+        "exceptions": {
+            "description": "Tags that represent exceptions to the default",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "default": [],
+            "uniqueItems": true
+        },
+        "datum": {
+            "type": "object",
+            "required": ["options"],
+            "properties": {
+                "visible": {
+                    "$ref": "#/definitions/visible"
+                },
+                "exceptions": {
+                    "$ref": "#/definitions/exceptions"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": ["text", "tags"],
+                        "properties": {
+                            "text": {
+                                "type": "string",
+                                "description": "The actual information to be displayed"
+                            },
+                            "tags": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "The tags where this information should be displayed"
+                            },
+                            "default": {
+                                "type": "boolean",
+                                "description": "Whether or not this information has been displayed by default"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "bullet": {
+            "definitions": {
+                "text": {
+                    "required": ["text"],
+                    "properties": {
+                        "text": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "sublist": {
+                    "required": ["list"],
+                    "properties": {
+                        "bulleted": {
+                            "type": "object",
+                            "properties": {
+                                "default": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "exceptions": {
+                                    "$ref": "#/definitions/exceptions"
+                                }
+                            },
+                            "default":{
+                                "default":false,
+                                "exceptions":[]
+                            }
+                        },
+                        "list": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "required": ["text"],
+                                "properties": {
+                                    "visible": {
+                                        "$ref": "#/definitions/visible"
+                                    },
+                                    "exceptions": {
+                                        "$ref": "#/definitions/exceptions"
+                                    },
+                                    "text": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            "type": "object",
+            "required": [],
+            "allOf": [{
+                    "anyOf": [{
+                        "$ref": "#/definitions/bullet/definitions/text"
+                    }, {
+                        "$ref": "#/definitions/bullet/definitions/sublist"
+                    }]
+                },
+                {
+                    "properties": {
+                        "visible": {
+                            "$ref": "#/definitions/visible"
+                        },
+                        "exceptions": {
+                            "$ref": "#/definitions/exceptions"
+                        },
+                        "title": {
+                            "type": "string"
+                        }
+                    },
+                    "required": []
+                }
+            ]
+        }
+    },
+
+    "$id": "./schema.json",
+    "title": "Resume Entry",
+    "description": "Describes the possible permutations of a resume entry given various tags",
+    "type": "object",
+    "required": ["data"],
+    "properties": {
+        "visible": {
+            "$ref": "#/definitions/visible"
+        },
+        "exceptions": {
+            "$ref": "#/definitions/exceptions"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "$ref": "#/definitions/datum",
+                    "description": "Heading for the entry"
+                },
+                "subtitle": {
+                    "$ref": "#/definitions/datum",
+                    "description": "Subheading for the entry"
+                },
+                "date": {
+                    "$ref": "#/definitions/datum",
+                    "description": "Small subheading floated to the right indicating the time of the entry"
+                },
+                "bullets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bullet"
+                    }
+                }
+            }
+        }
+    }
+}

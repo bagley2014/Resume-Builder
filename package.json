@@ -1,0 +1,27 @@
+{
+  "name": "resume-builder",
+  "version": "0.0.0",
+  "description": "Assembles a resume",
+  "main": "lib/main.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "prestart": "npm run build",
+    "start": "node .",
+    "nodemon": "nodemon --exec npm start"
+  },
+  "author": "Daryl Bagley",
+  "license": "MIT",
+  "dependencies": {
+    "ajv": "^6.12.4",
+    "puppeteer": "5.2.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
+    "@babel/register": "^7.10.5"
+  }
+}
