@@ -71,7 +71,7 @@ function Entry(props) {
         <span className="date">{props.date}</span>
         <h3>{props.title}</h3>
         <address>{props.subtitle}</address>
-        <ul>{props.bullets.map((bullet,index) =>
+        <ul>{props.bullets.map((bullet, index) =>
             <Bullet title={bullet.title} bulleted={bullet.bulleted} list={bullet.list} text={bullet.text} key={index/*bullet.title || bullet.text || bullet.list[0]*/} />
         )}</ul>
     </div>
@@ -82,26 +82,32 @@ function Bullet(props) {
         return <li>
             {props.title && <b><u>{props.title}: </u></b>}
             <ul className='float-cols'>
-                {props.list.map((item,index) =>
+                {props.list.map((item, index) =>
                     <ListItem value={item} key={index} bulleted={true} />
                 )}
             </ul>
         </li>
     }
     else {
-        var content;
-        if (props.text) content = props.text
-        else content = <span>
-            <ListItem value={props.list[0]} key={0} bulleted={false} />
-            {props.list.slice(1).map((item) => "<b>&nbsp;|&nbsp;</b>" + item).map((item, index) =>
-                <ListItem value={item} key={index+1} bulleted={false} />
-            )}
-        </span>
+        if (props.text) {
+            return <li>
+                {props.title && <b>{props.title}: </b>}
+                <span dangerouslySetInnerHTML={{ __html: props.text }} />
+            </li >
+        }
+        else {
+            var content = <span>
+                <ListItem value={props.list[0]} key={0} bulleted={false} />
+                {props.list.slice(1).map((item) => "<b>&nbsp;|&nbsp;</b>" + item).map((item, index) =>
+                    <ListItem value={item} key={index + 1} bulleted={false} />
+                )}
+            </span>
 
-        return <li>
-            {props.title && <b>{props.title}: </b>}
-            {content}
-        </li >
+            return <li>
+                {props.title && <b>{props.title}: </b>}
+                {content}
+            </li >
+        }
     }
 }
 
