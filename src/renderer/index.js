@@ -77,10 +77,12 @@ function Entry(props) {
     </div>
 }
 
+
+//TODO: Find a way to rewrite this function to have less repeated html
 function Bullet(props) {
     if (props.bulleted) {
         return <li>
-            {props.title && <b><u>{props.title}: </u></b>}
+            {props.title && <b><u>{props.title} </u></b>}
             <ul className='float-cols'>
                 {props.list.map((item, index) =>
                     <ListItem value={item} key={index} bulleted={true} />
@@ -91,7 +93,7 @@ function Bullet(props) {
     else {
         if (props.text) {
             return <li>
-                {props.title && <b>{props.title}: </b>}
+                {props.title && <b>{props.title} </b>}
                 <span dangerouslySetInnerHTML={{ __html: props.text }} />
             </li >
         }
@@ -104,7 +106,7 @@ function Bullet(props) {
             </span>
 
             return <li>
-                {props.title && <b>{props.title}: </b>}
+                {props.title && <b>{props.title} </b>}
                 {content}
             </li >
         }

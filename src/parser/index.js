@@ -60,15 +60,15 @@ function bulletAdjuster(bulletCache) {
 				bulleted: bullet.bulleted && bullet.bulleted.default == !intersection(bullet.bulleted.exceptions, _tags).length
 			}
 			if (bullet.refs) {
-				console.log(bullet.refs)
-				console.log(bulletCache)
+				//console.log(bullet.refs)
+				//console.log(bulletCache)
 				result.list = result.list || [];
 				bullet.refs.forEach(ref => {
-					console.log(bulletCache[ref])
+					//console.log(bulletCache[ref])
 					if (bulletCache[ref]) result.list = result.list.concat(bulletCache[ref])
 				});
 				result.list = result.list.length ? result.list : undefined;
-				console.log(result.list)
+				//console.log(result.list)
 			}
 		}
 		return result;
