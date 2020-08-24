@@ -4,7 +4,7 @@ const fs = require('fs');
 const puppeteer = require('puppeteer');
 
 /******** internal information ********/
-var _cssFile = "./static/style.css";
+var _cssFile = __dirname + "/../../static/style.css";
 var _heading = <div></div>
 var _sections = [];
 
@@ -19,7 +19,7 @@ function output(fileName, resume) {
                 const browser = await puppeteer.launch();
                 const page = await browser.newPage();
 
-                await page.goto(`file://${__dirname}/../../${fileName}.html`, { waitUntil: 'networkidle0' });
+                await page.goto(`file://${process.cwd()}\\${fileName}.html`, { waitUntil: 'networkidle0' });
 
                 await page.pdf({
                     path: fileName + '.pdf',
@@ -48,8 +48,8 @@ function generateHTML() {
             </head>
             <body>
                 {exports.heading()}
-                {exports.sections().map((section) => 
-                    <SectionComponent title={section.title} entries={section.entries} key={section.title} />
+                {exports.sections().map((section, index) =>
+                    <SectionComponent title={section.title} entries={section.entries} key={index} />
                 )}
             </body>
         </html>
@@ -60,8 +60,8 @@ function generateHTML() {
 function SectionComponent(props) {
     return <div>
         <h2>{props.title}</h2>
-        {props.entries.map((entry) => 
-            <Entry date={entry.date} title={entry.title} subtitle={entry.subtitle} bullets={entry.bullets} key={entry.title} />
+        {props.entries.map((entry, index) =>
+            <Entry date={entry.date} title={entry.title} subtitle={entry.subtitle} bullets={entry.bullets} key={index} />
         )}
     </div>;
 }
@@ -71,8 +71,8 @@ function Entry(props) {
         <span className="date">{props.date}</span>
         <h3>{props.title}</h3>
         <address>{props.subtitle}</address>
-        <ul>{props.bullets.map((bullet) => 
-            <Bullet title={bullet.title} bulleted={bullet.bulleted} list={bullet.list} text={bullet.text} key={bullet.title || bullet.text || bullet.list[0]} />
+        <ul>{props.bullets.map((bullet,index) =>
+            <Bullet title={bullet.title} bulleted={bullet.bulleted} list={bullet.list} text={bullet.text} key={index/*bullet.title || bullet.text || bullet.list[0]*/} />
         )}</ul>
     </div>
 }
@@ -82,21 +82,27 @@ function Bullet(props) {
         return <li>
             {props.title && <b><u>{props.title}: </u></b>}
             <ul className='float-cols'>
-                {props.list.map((item) => 
-                    <ListItem value={item} key={item} bulleted={true} />
+                {props.list.map((item,index) =>
+                    <ListItem value={item} key={index} bulleted={true} />
                 )}
             </ul>
         </li>
     }
-    return <li>
-        {props.title && <b>{props.title}: </b>}
-        {props.list ?
-            [<ListItem value={props.list[0]} key={props.list[0]} bulleted={false} />] +
-            props.list.slice(1).map((item) => "<b>|</b> " + item).map((item) => 
-                <ListItem value={item} key={item} bulleted={false} />
-            )
-            : props.text}
-    </li >
+    else {
+        var content;
+        if (props.text) content = props.text
+        else content = <span>
+            <ListItem value={props.list[0]} key={0} bulleted={false} />
+            {props.list.slice(1).map((item) => "<b>&nbsp;|&nbsp;</b>" + item).map((item, index) =>
+                <ListItem value={item} key={index+1} bulleted={false} />
+            )}
+        </span>
+
+        return <li>
+            {props.title && <b>{props.title}: </b>}
+            {content}
+        </li >
+    }
 }
 
 function ListItem(props) {
@@ -143,7 +149,7 @@ exports.heading = function (heading) {
 
 //Function to create a new section
 exports.section = function (sectionObj) {
-    for(var i = 0; i < sectionObj.entries.length; i++){
+    for (var i = 0; i < sectionObj.entries.length; i++) {
         sectionObj.entries[i].bullets = sectionObj.entries[i].bullets || [];
     }
     _sections.push(sectionObj);

@@ -1,3 +1,4 @@
+const path = require('path')
 var Parser = require("./parser")
 
 class Resume {
@@ -5,19 +6,19 @@ class Resume {
     parser = null;
 
     constructor(tags, all = false) {
-        parser = new Parser(tags, all);
+        this.parser = new Parser(tags, all);
     }
 
-    css = resume.css;
-    heading = resume.heading;
-    section = resume.section;
-    sections = resume.sections;
-    entry = resume.entry;
-    render = resume.render;    
+    css = this.resume.css;
+    heading = this.resume.heading;
+    section = this.resume.section;
+    sections = this.resume.sections;
+    entry = this.resume.entry;
+    render = this.resume.render;    
 
     parse = function (pathString) {
-        if (path.extname(pathString) == '.json') return parser.parseFile(pathString);
-        else return parser.parseFolder(pathString);
+        if (path.extname(pathString) == '.json') return this.parser.parseFile(pathString);
+        else return this.parser.parseFolder(pathString);
     }
 }
 

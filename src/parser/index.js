@@ -24,7 +24,7 @@ var intersection = (a, b) => a.filter(e => b.includes(e));
 
 function isVisible(object) {
 	// Visiblility must equal the lack of an exception
-	return object.visible == !(intersection(object.exceptions, _tags).length) || _all
+	return object && (object.visible == !(intersection(object.exceptions, _tags).length) || _all)
 }
 
 function datumAdjuster(datum) {
@@ -48,17 +48,31 @@ function datumAdjuster(datum) {
 	return result;
 }
 
-function bulletAdjuster(bullet) {
-	var result;
-	if (isVisible(bullet)) {
-		result = {
-			title: bullet.title,
-			text: bullet.text,
-			list: bullet.list && bullet.list.filter(isVisible).map((el) => el.text),
-			bulleted: bullet.bulleted && bullet.bulleted.default == !intersection(bullet.bulleted.exceptions, _tags).length
+function bulletAdjuster(bulletCache) {
+	return (bullet) => {
+		if (bullet.title) bulletCache[bullet.title] = bullet.list && bullet.list.filter(isVisible).map((el) => el.text)
+		var result;
+		if (isVisible(bullet)) {
+			result = {
+				title: bullet.title,
+				text: bullet.text,
+				list: bullet.list && bullet.list.filter(isVisible).map((el) => el.text),
+				bulleted: bullet.bulleted && bullet.bulleted.default == !intersection(bullet.bulleted.exceptions, _tags).length
+			}
+			if (bullet.refs) {
+				console.log(bullet.refs)
+				console.log(bulletCache)
+				result.list = result.list || [];
+				bullet.refs.forEach(ref => {
+					console.log(bulletCache[ref])
+					if (bulletCache[ref]) result.list = result.list.concat(bulletCache[ref])
+				});
+				result.list = result.list.length ? result.list : undefined;
+				console.log(result.list)
+			}
 		}
+		return result;
 	}
-	return result;
 }
 
 /****** Exports ******/
@@ -73,17 +87,18 @@ class Parser {
 		var object = JSON.parse(fs.readFileSync(path))
 
 		var result;
-	
+
 		if (validateJSON(object) && isVisible(object)) {
 			result = {};
 			result.title = datumAdjuster(object.data.title);
 			result.subtitle = datumAdjuster(object.data.subtitle);
 			result.date = datumAdjuster(object.data.date);
-	
-			result.bullets = object.data.bullets.map(bulletAdjuster).filter((el) => el)
+
+			var bulletCache = {};
+			result.bullets = object.data.bullets.map(bulletAdjuster(bulletCache)).filter((el) => el)
 				.filter((el) => (el.list && el.list.length) || el.text) //Filters out bullets devoid of content
 		}
-	
+
 		return result;
 	}
 

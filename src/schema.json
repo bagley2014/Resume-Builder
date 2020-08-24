@@ -100,6 +100,33 @@
                             }
                         }
                     }
+                },
+                "reflist": {
+                    "required": ["refs"],
+                    "properties": {
+                        "bulleted": {
+                            "type": "object",
+                            "properties": {
+                                "default": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "exceptions": {
+                                    "$ref": "#/definitions/exceptions"
+                                }
+                            },
+                            "default":{
+                                "default":false,
+                                "exceptions":[]
+                            }
+                        },
+                        "refs": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
                 }
             },
 
@@ -110,6 +137,8 @@
                         "$ref": "#/definitions/bullet/definitions/text"
                     }, {
                         "$ref": "#/definitions/bullet/definitions/sublist"
+                    }, {
+                        "$ref": "#/definitions/bullet/definitions/reflist"
                     }]
                 },
                 {
