@@ -151,6 +151,12 @@
                         },
                         "title": {
                             "type": "string"
+                        },
+                        "title_singular": {
+                            "type": "string"
+                        },
+                        "title_plural": {
+                            "type": "string"
                         }
                     },
                     "required": []

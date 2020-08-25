@@ -15,6 +15,8 @@ function validateJSON(json) {
 	return valid;
 }
 
+//TODO: Set the schema up to not allow any properties I did not expressly allow
+
 /******** Internal fields *******/
 _tags = ['generic']
 _all = false
@@ -54,7 +56,7 @@ function bulletAdjuster(bulletCache) {
 		var result;
 		if (isVisible(bullet)) {
 			result = {
-				title: bullet.title,
+				title: bullet.title || ((bullet.list && bullet.list.length > 1) ? bullet.title_plural : bullet.title_singular),
 				text: bullet.text,
 				list: bullet.list && bullet.list.filter(isVisible).map((el) => el.text),
 				bulleted: bullet.bulleted && bullet.bulleted.default == !intersection(bullet.bulleted.exceptions, _tags).length
