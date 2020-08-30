@@ -109,7 +109,7 @@ class Parser {
 		var files = fs.readdirSync(folderPath).reverse().filter((file) => path.extname(file) == '.json');
 
 		result.title = folderPath.split("/").pop();
-		result.entries = files.map(file => this.parseFile(folderPath + "\\" + file)).filter((el) => el)
+		result.entries = files.map(file => this.parseFile(folderPath + "/" + file)).filter((el) => el)
 		return result;
 	}
 

@@ -19,7 +19,7 @@ function output(fileName, resume) {
                 const browser = await puppeteer.launch();
                 const page = await browser.newPage();
 
-                await page.goto(`file://${process.cwd()}\\${fileName}.html`, { waitUntil: 'networkidle0' });
+                await page.goto(`file://${process.cwd()}/${fileName}.html`, { waitUntil: 'networkidle0' });
 
                 await page.pdf({
                     path: fileName + '.pdf',
