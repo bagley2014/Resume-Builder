@@ -2,19 +2,20 @@ const path = require('path')
 var Parser = require("./parser")
 
 class Resume {
-    resume = require("./renderer")
-    parser = null;
 
     constructor(tags, all = false) {
         this.parser = new Parser(tags, all);
-    }
 
-    css = this.resume.css;
-    heading = this.resume.heading;
-    section = this.resume.section;
-    sections = this.resume.sections;
-    entry = this.resume.entry;
-    render = this.resume.render;    
+        delete require.cache[require.resolve("./renderer")];
+
+        this.resume = require("./renderer");
+        this.css = this.resume.css;
+        this.heading = this.resume.heading;
+        this.section = this.resume.section;
+        this.sections = this.resume.sections;
+        this.entry = this.resume.entry;
+        this.render = this.resume.render;
+    }
 
     parse = function (pathString) {
         if (path.extname(pathString) == '.json') return this.parser.parseFile(pathString);

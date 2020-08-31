@@ -4,7 +4,7 @@ const fs = require('fs');
 const puppeteer = require('puppeteer');
 
 /********* internal functions *********/
-function output(fileName, resume) {
+function output(fileName, resume, callback) {
     console.log(`Saving ${fileName}.html`)
     fs.promises.writeFile(fileName + '.html', resume)
         .then(() => {
@@ -32,6 +32,7 @@ function output(fileName, resume) {
         })
         .then(() => console.log("Save complete"))
         .catch((reason) => console.error(reason))
+        .then(callback)
 }
 
 function generateHTML() {
@@ -175,7 +176,8 @@ exports.entry = function (entryObj) {
 }
 
 //Outputs the resume as both html and pdf
-exports.render = function (fileName = "resume") {
+exports.render = function (fileName = "resume", callback) {
+    callback = callback || function(){}
     html = generateHTML();
-    output(fileName, html);
+    output(fileName, html, callback);
 }
