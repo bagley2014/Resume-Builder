@@ -3,12 +3,6 @@ const ReactDOMServer = require('react-dom/server');
 const fs = require('fs');
 const puppeteer = require('puppeteer');
 
-/******** internal information ********/
-var _cssFile = __dirname + "/../../static/style.css";
-var _heading = <div></div>
-var _sections = [];
-
-
 /********* internal functions *********/
 function output(fileName, resume) {
     console.log(`Saving ${fileName}.html`)
@@ -128,9 +122,10 @@ function ListItem(props) {
 
 //Getter-setter for the css file
 exports.css = function (fileName) {
-    if (!fileName) return _cssFile;
+    exports.css.cssFile = exports.css.cssFile || __dirname + "/../../static/style.css";
+    if (!fileName) return exports.css.cssFile;
     else {
-        _cssFile = fileName;
+        exports.css.cssFile = fileName;
         return exports;
     }
 }
@@ -138,13 +133,14 @@ exports.css = function (fileName) {
 //Getter-setter for the heading at the top of the file
 //Takes either a htmlstring literal or an object with name/phone/email properties
 exports.heading = function (heading) {
-    if (!heading) return _heading;
+    exports.heading.heading = exports.heading.heading || <div></div>
+    if (!heading) return exports.heading.heading;
     else {
         if (typeof heading == 'string') {
-            _heading = <div dangerouslySetInnerHTML={{ __html: heading }} />;
+            exports.heading.heading = <div dangerouslySetInnerHTML={{ __html: heading }} />;
         }
         else {
-            _heading = <div><h1>{heading.name}</h1>
+            exports.heading.heading = <div><h1>{heading.name}</h1>
                 <span>
                     <b>Email:</b> {heading.email} <b>&nbsp;|&nbsp;</b>&nbsp;
                 <b>Phone:</b> {heading.phone}
@@ -157,22 +153,23 @@ exports.heading = function (heading) {
 
 //Function to create a new section
 exports.section = function (sectionObj) {
+    exports.section.sections = exports.section.sections || [];
     for (var i = 0; i < sectionObj.entries.length; i++) {
         sectionObj.entries[i].bullets = sectionObj.entries[i].bullets || [];
     }
-    _sections.push(sectionObj);
+    exports.section.sections.push(sectionObj);
     return exports;
 }
 
 //Getter function for the list of sections
 exports.sections = function () {
-    return _sections;
+    return exports.section.sections || [];
 }
 
 //Function to add an entry to the most recent section
 exports.entry = function (entryObj) {
     entryObj.bullets = entryObj.bullets || [];
-    _sections[_sections.length - 1].entries.push(entryObj);
+    exports.section.sections[exports.section.sections.length - 1].entries.push(entryObj);
     return exports;
 }
 
