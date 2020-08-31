@@ -24,14 +24,21 @@ _all = false
 /******* Internal functions *******/
 var intersection = (a, b) => a.filter(e => b.includes(e));
 
-function isVisible(object) {
-	// Visiblility must equal the lack of an exception
-	return object && (object.visible == !(intersection(object.exceptions, _tags).length) || _all)
+//function isVisible(object, tags) {
+//	// Visiblility must equal the lack of an exception
+//	return object && (object.visible == !(intersection(object.exceptions, tags).length) || _all)
+//}
+
+function isVisible(tags) {
+	return (object) => {
+		// Visiblility must equal the lack of an exception
+		return object && (object.visible == !(intersection(object.exceptions, tags).length) || _all)
+	}
 }
 
-function datumAdjuster(datum) {
+function datumAdjuster(datum, tags) {
 	var result;
-	if (isVisible(datum)) {
+	if (isVisible(tags)(datum)) {
 		//Set result to default option
 		datum.options.some(option => {
 			if (option.default) {
@@ -41,7 +48,7 @@ function datumAdjuster(datum) {
 		});
 		//Grab the first option that has a corresponding tag
 		datum.options.some(option => {
-			if (!intersection(_tags, option.tags).length) {
+			if (!intersection(tags, option.tags).length) {
 				result = option.text;
 				return option;
 			}
@@ -50,16 +57,16 @@ function datumAdjuster(datum) {
 	return result;
 }
 
-function bulletAdjuster(bulletCache) {
+function bulletAdjuster(bulletCache, tags) {
 	return (bullet) => {
-		if (bullet.title) bulletCache[bullet.title] = bullet.list && bullet.list.filter(isVisible).map((el) => el.text)
+		if (bullet.title) bulletCache[bullet.title] = bullet.list && bullet.list.filter(isVisible(tags)).map((el) => el.text)
 		var result;
-		if (isVisible(bullet)) {
+		if (isVisible(tags)(bullet)) {
 			result = {
 				title: bullet.title || ((bullet.list && bullet.list.length > 1) ? bullet.title_plural : bullet.title_singular),
 				text: bullet.text,
-				list: bullet.list && bullet.list.filter(isVisible).map((el) => el.text),
-				bulleted: bullet.bulleted && bullet.bulleted.default == !intersection(bullet.bulleted.exceptions, _tags).length
+				list: bullet.list && bullet.list.filter(isVisible(tags)).map((el) => el.text),
+				bulleted: bullet.bulleted && bullet.bulleted.default == !intersection(bullet.bulleted.exceptions, tags).length
 			}
 			if (bullet.refs) {
 				//console.log(bullet.refs)
@@ -80,9 +87,10 @@ function bulletAdjuster(bulletCache) {
 /****** Exports ******/
 
 class Parser {
+
 	constructor(tags, all = false) {
-		_tags = tags;
-		_all = all;
+		this.tags = tags;
+		this.all = all;
 	}
 
 	parseFile(path) {
@@ -90,14 +98,14 @@ class Parser {
 
 		var result;
 
-		if (validateJSON(object) && isVisible(object)) {
+		if (validateJSON(object) && isVisible(this.tags)(object)) {
 			result = {};
-			result.title = datumAdjuster(object.data.title);
-			result.subtitle = datumAdjuster(object.data.subtitle);
-			result.date = datumAdjuster(object.data.date);
+			result.title = datumAdjuster(object.data.title, this.tags);
+			result.subtitle = datumAdjuster(object.data.subtitle, this.tags);
+			result.date = datumAdjuster(object.data.date, this.tags);
 
 			var bulletCache = {};
-			result.bullets = object.data.bullets.map(bulletAdjuster(bulletCache)).filter((el) => el)
+			result.bullets = object.data.bullets.map(bulletAdjuster(bulletCache, tags)).filter((el) => el)
 				.filter((el) => (el.list && el.list.length) || el.text) //Filters out bullets devoid of content
 		}
 

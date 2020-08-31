@@ -8,8 +8,8 @@ function output(fileName, resume) {
     console.log(`Saving ${fileName}.html`)
     fs.promises.writeFile(fileName + '.html', resume)
         .then(() => {
+            console.log(`Saving ${fileName}.pdf`)
             (async () => {
-                console.log(`Saving ${fileName}.pdf`)
                 const browser = await puppeteer.launch();
                 const page = await browser.newPage();
 

@@ -1,6 +1,6 @@
 {
   "name": "@bagley2014/resume-builder",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Assembles a resume",
   "main": "lib/main.js",
   "scripts": {
