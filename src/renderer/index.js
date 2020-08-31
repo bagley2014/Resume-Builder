@@ -8,7 +8,7 @@ function output(fileName, resume) {
     console.log(`Saving ${fileName}.html`)
     fs.promises.writeFile(fileName + '.html', resume)
         .then(() => {
-            console.log(`Saving ${fileName}.pdf`)
+            console.log(`Saving ${fileName}.pdf`);
             (async () => {
                 const browser = await puppeteer.launch();
                 const page = await browser.newPage();
@@ -31,6 +31,7 @@ function output(fileName, resume) {
             })();
         })
         .then(() => console.log("Save complete"))
+        .catch((reason) => console.error(reason))
 }
 
 function generateHTML() {
