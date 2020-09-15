@@ -48,7 +48,7 @@ function datumAdjuster(datum, tags) {
 		});
 		//Grab the first option that has a corresponding tag
 		datum.options.some(option => {
-			if (!intersection(tags, option.tags).length) {
+			if (intersection(tags, option.tags).length) {
 				result = option.text;
 				return option;
 			}
